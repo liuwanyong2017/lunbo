@@ -198,6 +198,7 @@
 
                     }),
                     this.$box.find('.bar').on('click', function() {
+                        self.stopauto()
                         console.log($(this).index())
                         self.active($(this))
                         var index = $(this).index()
@@ -208,6 +209,7 @@
                         }
 
                     })
+
             },
             playnext: function(leng) {
                 var self = this
@@ -248,12 +250,12 @@
             },
             autoplay: function() {
                 var self = this
-                clock = setInterval(function() {
+                self.clock = setInterval(function() {
                     self.playnext(1)
                 }, 1500)
             },
             stopauto: function() {
-                clearInterval(clock)
+                clearInterval(this.clock)
             }
         }
         new roll($('.box').eq(0))
