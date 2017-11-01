@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>无限轮播</title>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        .box {
+            position: relative;
+            top: 100px;
+            margin: 0 auto;
+            width: 300px;
+            height: 250px;
+            border: 1px solid;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .box ul {
+            padding: 0;
+            margin: 0;
+            position: absolute;
+        }
+        
+        .box li {
+            list-style: none;
+            float: left;
+            width: 300px;
+            height: 250px;
+        }
+        
+        .box ul:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
+        .box a {
+            text-decoration: none;
+            display: block;
+        }
+        
+        .box img {
+            width: 300px;
+            height: 250px;
+        }
+        
+        .box span {
+            font-size: 30px;
+            display: block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            color: cornflowerblue;
+            position: absolute;
+            font-weight: 900;
+            margin-top: -15px;
+            top: 50%;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            transition: all 1.2s;
+            opacity: .6;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .box span:hover {
+            color: antiquewhite;
+            opacity: .9;
+        }
+        
+        .pre {
+            left: 30px;
+        }
+        
+        .next {
+            right: 30px;
+        }
+        
+        .barbox {
+            position: absolute;
+            text-align: center;
+            bottom: 40px;
+            width: 100%;
+        }
+        
+        .bar {
+            display: inline-block;
+            background: #000;
+            border: 1px solid #fff;
+            width: 25px;
+            height: 5px;
+            border-radius: 5px;
+            opacity: 0.5;
+            margin-right: 10px;
+            transition: all 1.2s;
+            cursor: pointer;
+        }
+        
+        .bar:hover {
+            opacity: 1;
+        }
+        
+        .active {
+            background: #fff;
+        }
+    </style>
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="box">
+        <ul>
+            <li>
+                <a href=""><img src="http://img2.imgtn.bdimg.com/it/u=1455412770,187294946&fm=27&gp=0.jpg" alt=""></a>
+            </li>
+            <li>
+                <a href=""><img src="http://img0.imgtn.bdimg.com/it/u=3671900893,3681890145&fm=27&gp=0.jpg" alt=""></a>
+            </li>
+            <li>
+                <a href=""><img src="http://img4.imgtn.bdimg.com/it/u=4211669961,1732543913&fm=27&gp=0.jpg" alt=""></a>
+            </li>
+            <li>
+                <a href=""><img src="http://img4.imgtn.bdimg.com/it/u=2233906600,497902272&fm=27&gp=0.jpg" alt=""></a>
+            </li>
+        </ul>
+        <span class="pre"><</span>
+        <span class="next">></span>
+        <div class="barbox">
+            <div class="bar active"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </div>
+
+    <div class="box">
+        <ul>
+            <li>
+                <a href=""><img src="http://img0.imgtn.bdimg.com/it/u=2729574682,2195130672&fm=27&gp=0.jpg" alt=""></a>
+            </li>
+            <li>
+                <a href=""><img src="http://img3.imgtn.bdimg.com/it/u=2644098417,2855359270&fm=27&gp=0.jpg" alt=""></a>
+            </li>
+            <li>
+                <a href=""><img src="http://img1.imgtn.bdimg.com/it/u=4131356061,2801798504&fm=27&gp=0.jpg" alt=""></a>
+            </li>
+            <li>
+                <a href=""><img src="http://img1.imgtn.bdimg.com/it/u=1297186364,1913349851&fm=27&gp=0.jpg" alt=""></a>
+            </li>
+        </ul>
+        <span class="pre"><</span>
+        <span class="next">></span>
+        <div class="barbox">
+            <div class="bar active"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </div>
+    <script>
+        function roll($box) {
+            this.init($box)
+            this.bind()
+            this.autoplay()
+        }
+        roll.prototype = {
+            init: function($box) {
+                this.$box = $box
+                this.index = 0
+                this.doing = false
+                this.liwid = this.$box.find('li').outerWidth(true)
+                this.licount = this.$box.find('li').length
+                this.$box.find('ul').append(this.$box.find('li').first().clone())
+                this.$box.find('ul').prepend(this.$box.find('li').last().clone())
+                this.$box.find('ul').width(this.liwid * (this.licount + 2))
+                this.$box.find('ul').css('left', -this.liwid)
+            },
+            bind: function() {
+                var self = this
+                this.$box.find('.next').on('click', function() {
+                        console.log('nxt,,,')
+                        self.playnext(1)
+
+                    }),
+                    this.$box.find('.pre').on('click', function() {
+                        console.log('pre,,,')
+                        self.playpre(1)
+
+                    }),
+                    this.$box.find('.bar').on('click', function() {
+                        console.log($(this).index())
+                        self.active($(this))
+                        var index = $(this).index()
+                        if (index > self.index) {
+                            self.playnext(index - self.index)
+                        } else if (index < self.index) {
+                            self.playpre(self.index - index)
+                        }
+
+                    })
+            },
+            playnext: function(leng) {
+                var self = this
+                if (self.doing) return;
+                self.doing = true
+                self.$box.find('ul').animate({
+                    left: '-=' + self.liwid * leng
+                }, function() {
+                    self.index += leng
+                    if (self.index === self.licount) {
+                        self.$box.find('ul').css('left', -self.liwid)
+                        self.index = 0
+                    }
+                    self.active(self.$box.find('.bar').eq(self.index))
+                    self.doing = false
+                })
+
+            },
+            playpre: function(leng) {
+                var self = this
+                if (self.doing) return;
+                self.doing = true
+                self.$box.find('ul').animate({
+                    left: '+=' + self.liwid * leng
+                }, function() {
+                    self.index -= leng
+                    if (self.index < 0) {
+                        self.$box.find('ul').css('left', -self.liwid * self.licount)
+                        self.index = self.licount - 1
+                    }
+                    //console.log(self.index)
+                    self.active(self.$box.find('.bar').eq(self.index))
+                    self.doing = false
+                })
+            },
+            active: function(node) {
+                node.addClass('active').siblings().removeClass('active')
+            },
+            autoplay: function() {
+                var self = this
+                clock = setInterval(function() {
+                    self.playnext(1)
+                }, 1500)
+            },
+            stopauto: function() {
+                clearInterval(clock)
+            }
+        }
+        new roll($('.box').eq(0))
+        new roll($('.box').eq(1))
+            /*function roll($box) {
+            this.init($box)
+            this.bind()
+        }
+        roll.prototype = {
+            constructor: roll,
+            init: function($box) {
+                this.$box = $box
+                this.$ul = this.$box.find('ul')
+                this.$pre = this.$box.find('.pre')
+                this.$next = this.$box.find('.next')
+                this.$li = this.$box.find('ul >li')
+                this.$bar = this.$box.find('.bar')
+                this.index = 0
+                this.$liwid = this.$li.outerWidth(true)
+                this.$licount = this.$li.length
+                this.$ul.append(this.$li.first().clone())
+                this.$ul.prepend(this.$li.last().clone())
+                this.$ul.width(this.$liwid * (this.$licount + 2))
+                this.$ul.css(
+                    'left', -this.$liwid
+                )
+
+
+            },
+            bind: function() {
+                var self = this
+                this.$next.on('click', function() {
+                    //console.log('next,,,')
+                    self.playnext()
+                })
+                this.$pre.on('click', function() {
+                    console.log('pre,,,')
+                    self.playpre()
+                })
+                this.$bar.on('click', function() {
+                    console.log($(this).index())
+                    var index = $(this).index()
+                    self.active($(this))
+                    self.$ul.animate({
+                        left: '-=' + self.$liwid * (index - self.index)
+                    })
+                    self.index = index
+                })
+            },
+            playnext: function() {
+                var self = this
+                console.log('eeee', self.$ul.css('left'))
+                self.$ul.animate({
+                    left: '-=' + this.$liwid
+                })
+                self.index += 1
+                    // console.log(self.index, self.$licount)
+                if (self.index === self.$licount) {
+
+                    self.$ul.css({
+                            left: '-' + self.$liwid
+                        })
+                        //self.$ul.css('left', -self.$liwid)
+                    self.index = 0
+                    console.log(self.index, self.$ul.css('left'))
+
+                }
+                self.active(self.$bar.eq(self.index))
+                console.log('eeee', self.$ul.css('left'))
+            },
+            playpre: function() {
+                var self = this
+                self.$ul.animate({
+                    left: '+=' + this.$liwid
+                })
+                self.index -= 1
+                if (self.index = -1) {
+                    self.$ul.css('left', self.$liwid * (self.$licount))
+                    self.index = self.$licount - 1
+                }
+                self.active(self.$bar.eq(self.index))
+                    //console.log(self.index, self.$licount)
+                    //console.log('eeee', self.$ul.css('left'))
+            },
+            active: function(node) {
+                node.addClass('active').siblings().removeClass('active')
+            }
+        }
+        new roll($('.box').eq(0))
+        new roll($('.box').eq(1))*/
+    </script>
+
+</body>
+
+</html>
